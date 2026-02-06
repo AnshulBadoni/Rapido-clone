@@ -35,7 +35,10 @@ export default function HomeScreen() {
           <MaterialIcons name="menu" size={24} color={colors.text} />
         </TouchableOpacity>
         <View style={styles.topRight}>
-          <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.card }]}>
+          <TouchableOpacity
+            style={[styles.iconButton, { backgroundColor: colors.card }]}
+            onPress={() => router.push('/(tabs)/alerts')}
+          >
             <MaterialIcons name="notifications" size={24} color={colors.text} />
           </TouchableOpacity>
           <TouchableOpacity

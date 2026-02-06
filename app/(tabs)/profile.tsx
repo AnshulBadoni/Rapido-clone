@@ -6,7 +6,7 @@ import {
   useColorScheme,
   ScrollView,
   TouchableOpacity,
-  Image
+  Alert
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
@@ -18,6 +18,17 @@ export default function ProfileScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme as 'light' | 'dark'];
+
+  const handleLogout = () => {
+    Alert.alert(
+      "Logout",
+      "Are you sure you want to logout?",
+      [
+        { text: "Cancel", style: "cancel" },
+        { text: "Logout", style: "destructive", onPress: () => router.replace('/') }
+      ]
+    );
+  };
 
   const menuItems = [
     {
@@ -82,7 +93,10 @@ export default function ProfileScreen() {
         </View>
 
         <View style={styles.logoutSection}>
-          <TouchableOpacity style={[styles.logoutButton, { backgroundColor: colors.card, borderColor: colors.border }]}>
+          <TouchableOpacity
+            style={[styles.logoutButton, { backgroundColor: colors.card, borderColor: colors.border }]}
+            onPress={handleLogout}
+          >
             <MaterialIcons name="logout" size={20} color={colors.error} />
             <Text style={[styles.logoutText, { color: colors.error }]}>Logout</Text>
           </TouchableOpacity>

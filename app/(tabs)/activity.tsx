@@ -7,11 +7,13 @@ import {
   ScrollView,
   TouchableOpacity
 } from 'react-native';
+import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
 import { Header } from '../../components/Header';
 import { RideCard } from '../../components/RideCard';
 
 export default function ActivityScreen() {
+  const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme as 'light' | 'dark'];
   const [activeTab, setActiveTab] = useState('Rides');
@@ -52,6 +54,7 @@ export default function ActivityScreen() {
           status="Completed"
           pickup="12th Main Rd, Indiranagar"
           dropoff="Koramangala 4th Block"
+          onPress={() => router.push('/ride/summary')}
         />
 
         <RideCard
@@ -61,6 +64,7 @@ export default function ActivityScreen() {
           status="Completed"
           pickup="MG Road Metro Station"
           dropoff="Phoenix Marketcity"
+          onPress={() => router.push('/ride/summary')}
         />
 
         {/* Map Snippet Mock */}
