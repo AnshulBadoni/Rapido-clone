@@ -1,17 +1,15 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   useColorScheme,
   TouchableOpacity,
-  Image,
   Dimensions
 } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
 import { useRouter } from 'expo-router';
 import { Colors } from '../../constants/Colors';
-import { Layout } from '../../constants/Layout';
 import { MapPlaceholder } from '../../components/MapPlaceholder';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
@@ -21,25 +19,29 @@ export default function TrackingScreen() {
   const colors = Colors[colorScheme as 'light' | 'dark'];
   const insets = useSafeAreaInsets();
 
+  const [markerPos, setMarkerPos] = useState({ latitude: 12.9716, longitude: 77.5946 });
+  const destinationPos = { latitude: 12.9816, longitude: 77.6046 };
+
+  // Simulate movement
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setMarkerPos((prev: { latitude: number; longitude: number }) => ({
+        latitude: prev.latitude + (destinationPos.latitude - prev.latitude) * 0.05,
+        longitude: prev.longitude + (destinationPos.longitude - prev.longitude) * 0.05,
+      }));
+    }, 2000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Map Background */}
       <View style={styles.mapContainer}>
-        <MapPlaceholder />
-
-        {/* Simulation of In-Ride path */}
-        <View style={styles.trackingMarker}>
-          <View style={[styles.bikeIcon, { backgroundColor: colors.primary }]}>
-            <MaterialIcons name="two-wheeler" size={24} color="#1c190d" />
-          </View>
-          <View style={styles.liveBadge}>
-            <Text style={styles.liveBadgeText}>LIVE</Text>
-          </View>
-        </View>
-
-        <View style={styles.destinationMarker}>
-          <MaterialIcons name="location-on" size={40} color="#ef4444" />
-        </View>
+        <MapPlaceholder
+          showRoute={true}
+          markerPosition={markerPos}
+          destinationPosition={destinationPos}
+        />
       </View>
 
       {/* Top Overlay */}
@@ -142,45 +144,6 @@ const styles = StyleSheet.create({
   },
   mapContainer: {
     ...StyleSheet.absoluteFillObject,
-  },
-  trackingMarker: {
-    position: 'absolute',
-    top: '45%',
-    left: '55%',
-    alignItems: 'center',
-  },
-  bikeIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderWidth: 2,
-    borderColor: 'white',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.2,
-    shadowRadius: 10,
-    elevation: 4,
-  },
-  liveBadge: {
-    backgroundColor: '#000000cc',
-    paddingHorizontal: 6,
-    paddingVertical: 2,
-    borderRadius: 10,
-    marginTop: 4,
-  },
-  liveBadgeText: {
-    color: 'white',
-    fontSize: 8,
-    fontWeight: 'bold',
-  },
-  destinationMarker: {
-    position: 'absolute',
-    top: '30%',
-    left: '40%',
-    marginLeft: -20,
-    marginTop: -40,
   },
   topOverlay: {
     flexDirection: 'row',

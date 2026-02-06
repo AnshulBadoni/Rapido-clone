@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -18,12 +18,13 @@ export default function VehicleSelectionScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme as 'light' | 'dark'];
+  const [selectedRide, setSelectedRide] = useState<'Bike' | 'Auto' | 'Cab'>('Bike');
 
   return (
     <View style={[styles.container, { backgroundColor: colors.background }]}>
       {/* Map Background */}
       <View style={styles.mapContainer}>
-        <MapPlaceholder />
+        <MapPlaceholder showRoute={true} />
       </View>
 
       {/* Header Overlay */}
@@ -63,8 +64,13 @@ export default function VehicleSelectionScreen() {
 
           <View style={styles.optionsList}>
             <TouchableOpacity
-              style={[styles.option, { borderColor: colors.primary, backgroundColor: colors.primary + '1a', borderWidth: 2 }]}
-              onPress={() => router.push('/ride/tracking')}
+              style={[
+                styles.option,
+                selectedRide === 'Bike'
+                  ? { borderColor: colors.primary, backgroundColor: colors.primary + '1a', borderWidth: 2 }
+                  : { backgroundColor: colors.border + '1a', borderColor: colors.border, borderWidth: 1 }
+              ]}
+              onPress={() => setSelectedRide('Bike')}
             >
               <View style={styles.optionLeft}>
                 <View style={[styles.optionIcon, { backgroundColor: colors.primary + '33' }]}>
@@ -86,7 +92,15 @@ export default function VehicleSelectionScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.option, { backgroundColor: colors.border + '1a', borderColor: colors.border, borderWidth: 1 }]}>
+            <TouchableOpacity
+              style={[
+                styles.option,
+                selectedRide === 'Auto'
+                  ? { borderColor: colors.primary, backgroundColor: colors.primary + '1a', borderWidth: 2 }
+                  : { backgroundColor: colors.border + '1a', borderColor: colors.border, borderWidth: 1 }
+              ]}
+              onPress={() => setSelectedRide('Auto')}
+            >
               <View style={styles.optionLeft}>
                 <View style={[styles.optionIcon, { backgroundColor: colors.border + '33' }]}>
                   <MaterialIcons name="electric-rickshaw" size={32} color={colors.muted} />
@@ -106,7 +120,15 @@ export default function VehicleSelectionScreen() {
               </View>
             </TouchableOpacity>
 
-            <TouchableOpacity style={[styles.option, { backgroundColor: colors.border + '1a', borderColor: colors.border, borderWidth: 1 }]}>
+            <TouchableOpacity
+              style={[
+                styles.option,
+                selectedRide === 'Cab'
+                  ? { borderColor: colors.primary, backgroundColor: colors.primary + '1a', borderWidth: 2 }
+                  : { backgroundColor: colors.border + '1a', borderColor: colors.border, borderWidth: 1 }
+              ]}
+              onPress={() => setSelectedRide('Cab')}
+            >
               <View style={styles.optionLeft}>
                 <View style={[styles.optionIcon, { backgroundColor: colors.border + '33' }]}>
                   <MaterialIcons name="directions-car" size={32} color={colors.muted} />
@@ -136,7 +158,7 @@ export default function VehicleSelectionScreen() {
             style={[styles.bookButton, { backgroundColor: colors.primary }]}
             onPress={() => router.push('/ride/tracking')}
           >
-             <Text style={styles.bookButtonText}>Book Bike</Text>
+             <Text style={styles.bookButtonText}>Book {selectedRide}</Text>
           </TouchableOpacity>
         </View>
       </View>

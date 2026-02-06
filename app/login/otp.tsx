@@ -1,12 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   View,
   Text,
   StyleSheet,
   TouchableOpacity,
   useColorScheme,
-  SafeAreaView,
-  TextInput
+  SafeAreaView
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -19,13 +18,35 @@ export default function OTPVerificationScreen() {
   const router = useRouter();
   const colorScheme = useColorScheme() ?? 'light';
   const colors = Colors[colorScheme as 'light' | 'dark'];
-  const [otp, setOtp] = useState(['4', '', '', '']);
+  const [otp, setOtp] = useState(['', '', '', '']);
+  const [activeIndex, setActiveIndex] = useState(0);
 
-  const handleOtpChange = (value: string, index: number) => {
-    const newOtp = [...otp];
-    newOtp[index] = value;
-    setOtp(newOtp);
+  const handleKeyPress = (key: string | number) => {
+    if (key === 'back') {
+      const newOtp = [...otp];
+      const indexToClear = otp[activeIndex] === '' ? Math.max(0, activeIndex - 1) : activeIndex;
+      newOtp[indexToClear] = '';
+      setOtp(newOtp);
+      setActiveIndex(indexToClear);
+    } else if (key === 'check') {
+      if (otp.join('').length === 4) {
+        router.replace('/(tabs)/home');
+      }
+    } else {
+      if (activeIndex < 4) {
+        const newOtp = [...otp];
+        newOtp[activeIndex] = key.toString();
+        setOtp(newOtp);
+        setActiveIndex(Math.min(3, activeIndex + 1));
+      }
+    }
   };
+
+  useEffect(() => {
+    if (otp.join('').length === 4) {
+      // Auto-verify simulation
+    }
+  }, [otp]);
 
   return (
     <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
@@ -38,21 +59,21 @@ export default function OTPVerificationScreen() {
             We have sent a 4-digit verification code to{' '}
             <Text style={{ color: colors.text, fontWeight: 'bold' }}>+91 98765 43210</Text>
           </Text>
-          <TouchableOpacity style={styles.editButton}>
+          <TouchableOpacity style={styles.editButton} onPress={() => router.back()}>
             <Text style={[styles.editText, { color: colors.primary }]}>Edit Number</Text>
             <MaterialIcons name="edit" size={14} color={colors.primary} />
           </TouchableOpacity>
         </View>
 
         <View style={styles.otpContainer}>
-          {otp.map((digit: string, index: number) => (
+          {otp.map((digit, index) => (
             <View
               key={index}
               style={[
                 styles.otpInput,
                 {
                   backgroundColor: colors.card,
-                  borderColor: digit ? colors.primary : colors.border
+                  borderColor: index === activeIndex ? colors.primary : (digit ? colors.primary : colors.border)
                 }
               ]}
             >
@@ -71,6 +92,7 @@ export default function OTPVerificationScreen() {
         <Button
           title="Verify & Proceed"
           onPress={() => router.replace('/(tabs)/home')}
+          disabled={otp.join('').length < 4}
           icon={<MaterialIcons name="arrow-forward" size={20} color="#1c190d" />}
         />
 
@@ -80,9 +102,7 @@ export default function OTPVerificationScreen() {
               <TouchableOpacity
                 key={index}
                 style={styles.key}
-                onPress={() => {
-                  if (key === 'check') router.replace('/(tabs)/home');
-                }}
+                onPress={() => handleKeyPress(key as any)}
               >
                 {key === 'back' ? (
                   <MaterialIcons name="backspace" size={24} color={colors.text} />

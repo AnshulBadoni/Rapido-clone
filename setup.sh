@@ -18,6 +18,8 @@ cat <<EOF > package.json
   },
   "dependencies": {
     "expo": "~51.0.0",
+    "expo-constants": "~16.0.2",
+    "expo-linking": "~6.3.1",
     "expo-router": "~3.5.0",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",
