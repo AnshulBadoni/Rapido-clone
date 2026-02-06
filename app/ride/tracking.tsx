@@ -1,0 +1,396 @@
+import React from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  useColorScheme,
+  TouchableOpacity,
+  Image,
+  Dimensions
+} from 'react-native';
+import { MaterialIcons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
+import { Colors } from '../../constants/Colors';
+import { Layout } from '../../constants/Layout';
+import { MapPlaceholder } from '../../components/MapPlaceholder';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+
+export default function TrackingScreen() {
+  const router = useRouter();
+  const colorScheme = useColorScheme() ?? 'light';
+  const colors = Colors[colorScheme as 'light' | 'dark'];
+  const insets = useSafeAreaInsets();
+
+  return (
+    <View style={[styles.container, { backgroundColor: colors.background }]}>
+      {/* Map Background */}
+      <View style={styles.mapContainer}>
+        <MapPlaceholder />
+
+        {/* Simulation of In-Ride path */}
+        <View style={styles.trackingMarker}>
+          <View style={[styles.bikeIcon, { backgroundColor: colors.primary }]}>
+            <MaterialIcons name="two-wheeler" size={24} color="#1c190d" />
+          </View>
+          <View style={styles.liveBadge}>
+            <Text style={styles.liveBadgeText}>LIVE</Text>
+          </View>
+        </View>
+
+        <View style={styles.destinationMarker}>
+          <MaterialIcons name="location-on" size={40} color="#ef4444" />
+        </View>
+      </View>
+
+      {/* Top Overlay */}
+      <View style={[styles.topOverlay, { paddingTop: insets.top + 10 }]}>
+        <TouchableOpacity
+          onPress={() => router.back()}
+          style={[styles.iconButton, { backgroundColor: colors.card }]}
+        >
+          <MaterialIcons name="arrow-back" size={24} color={colors.text} />
+        </TouchableOpacity>
+
+        <View style={styles.topRight}>
+          <View style={[styles.dropCard, { backgroundColor: colors.card, borderColor: colors.border }]}>
+            <Text style={[styles.dropLabel, { color: colors.muted }]}>DROPPING OFF AT</Text>
+            <Text style={[styles.dropMain, { color: colors.text }]} numberOfLines={1}>Koramangala 4th Block</Text>
+          </View>
+          <TouchableOpacity style={[styles.iconButton, { backgroundColor: colors.card }]}>
+            <MaterialIcons name="share" size={24} color={colors.text} />
+          </TouchableOpacity>
+        </View>
+      </View>
+
+      <View style={styles.sosContainer}>
+        <TouchableOpacity style={styles.sosButton}>
+          <MaterialIcons name="shield-with-heart" size={24} color="white" />
+          <Text style={styles.sosText}>SOS</Text>
+        </TouchableOpacity>
+      </View>
+
+      <View style={styles.flex} />
+
+      {/* Bottom Ride Details Card */}
+      <View style={[styles.bottomCard, { backgroundColor: colors.card, borderTopColor: colors.border }]}>
+        <View style={[styles.handle, { backgroundColor: colors.border }]} />
+
+        <View style={styles.statusRow}>
+          <View>
+            <Text style={[styles.etaText, { color: colors.text }]}>8 mins away</Text>
+            <Text style={[styles.etaMeta, { color: colors.muted }]}>1.8 km · Arriving at 10:45 AM</Text>
+          </View>
+          <View style={[styles.inRideBadge, { backgroundColor: colors.primary + '33', borderColor: colors.primary + '4d' }]}>
+            <Text style={[styles.inRideText, { color: colors.primary }]}>IN-RIDE</Text>
+          </View>
+        </View>
+
+        <View style={[styles.progressBar, { backgroundColor: colors.border + '33' }]}>
+          <View style={[styles.progressFill, { backgroundColor: colors.primary, width: '65%' }]} />
+        </View>
+
+        <View style={[styles.driverCard, { backgroundColor: colors.border + '1a', borderColor: colors.border }]}>
+          <View style={styles.driverAvatarContainer}>
+            <View style={[styles.driverAvatar, { borderColor: colors.card }]}>
+              <MaterialIcons name="person" size={32} color={colors.text} />
+            </View>
+            <View style={[styles.ratingBadge, { backgroundColor: colors.primary }]}>
+               <Text style={styles.ratingText}>4.8 ★</Text>
+            </View>
+          </View>
+
+          <View style={styles.driverInfo}>
+            <Text style={[styles.driverName, { color: colors.text }]}>John Doe</Text>
+            <Text style={[styles.vehicleModel, { color: colors.muted }]}>Yellow Honda Activa</Text>
+            <Text style={[styles.plateNumber, { color: colors.text }]}>KA 05 MN 9988</Text>
+          </View>
+
+          <View style={styles.driverActions}>
+            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.card }]}>
+              <MaterialIcons name="chat-bubble" size={20} color={colors.text} />
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.actionBtn, { backgroundColor: colors.primary }]}>
+              <MaterialIcons name="call" size={20} color="#1c190d" />
+            </TouchableOpacity>
+          </View>
+        </View>
+
+        <View style={styles.secondaryActions}>
+          <TouchableOpacity
+            style={[styles.secondaryBtn, { backgroundColor: colors.border + '33' }]}
+            onPress={() => router.push('/ride/summary')}
+          >
+            <MaterialIcons name="support-agent" size={20} color={colors.text} />
+            <Text style={[styles.secondaryBtnText, { color: colors.text }]}>Support</Text>
+          </TouchableOpacity>
+          <TouchableOpacity style={[styles.secondaryBtn, { backgroundColor: colors.border + '33' }]}>
+            <MaterialIcons name="cancel" size={20} color={colors.text} />
+            <Text style={[styles.secondaryBtnText, { color: colors.text }]}>Cancel</Text>
+          </TouchableOpacity>
+        </View>
+      </View>
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  flex: {
+    flex: 1,
+  },
+  mapContainer: {
+    ...StyleSheet.absoluteFillObject,
+  },
+  trackingMarker: {
+    position: 'absolute',
+    top: '45%',
+    left: '55%',
+    alignItems: 'center',
+  },
+  bikeIcon: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 2,
+    borderColor: 'white',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.2,
+    shadowRadius: 10,
+    elevation: 4,
+  },
+  liveBadge: {
+    backgroundColor: '#000000cc',
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 10,
+    marginTop: 4,
+  },
+  liveBadgeText: {
+    color: 'white',
+    fontSize: 8,
+    fontWeight: 'bold',
+  },
+  destinationMarker: {
+    position: 'absolute',
+    top: '30%',
+    left: '40%',
+    marginLeft: -20,
+    marginTop: -40,
+  },
+  topOverlay: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    zIndex: 10,
+  },
+  topRight: {
+    alignItems: 'flex-end',
+    gap: 12,
+  },
+  iconButton: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  dropCard: {
+    paddingHorizontal: 16,
+    paddingVertical: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    maxWidth: 180,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 4,
+  },
+  dropLabel: {
+    fontSize: 8,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  dropMain: {
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  sosContainer: {
+    position: 'absolute',
+    right: 16,
+    bottom: '42%',
+  },
+  sosButton: {
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#ef4444',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 4,
+    borderColor: '#ffffff33',
+    shadowColor: '#ef4444',
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.3,
+    shadowRadius: 12,
+    elevation: 8,
+  },
+  sosText: {
+    color: 'white',
+    fontSize: 9,
+    fontWeight: 'bold',
+    marginTop: -2,
+  },
+  bottomCard: {
+    borderTopLeftRadius: 32,
+    borderTopRightRadius: 32,
+    paddingHorizontal: 24,
+    paddingBottom: 40,
+    paddingTop: 8,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -8 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    elevation: 8,
+    borderTopWidth: 1,
+  },
+  handle: {
+    width: 48,
+    height: 6,
+    borderRadius: 3,
+    alignSelf: 'center',
+    marginBottom: 24,
+  },
+  statusRow: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 24,
+  },
+  etaText: {
+    fontSize: 24,
+    fontWeight: '800',
+  },
+  etaMeta: {
+    fontSize: 14,
+    fontWeight: '500',
+  },
+  inRideBadge: {
+    paddingHorizontal: 12,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+  },
+  inRideText: {
+    fontSize: 10,
+    fontWeight: '800',
+    letterSpacing: 1,
+  },
+  progressBar: {
+    height: 6,
+    borderRadius: 3,
+    marginBottom: 32,
+    overflow: 'hidden',
+  },
+  progressFill: {
+    height: '100%',
+    borderRadius: 3,
+  },
+  driverCard: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: 12,
+    borderRadius: 20,
+    borderWidth: 1,
+    marginBottom: 32,
+  },
+  driverAvatarContainer: {
+    position: 'relative',
+    marginRight: 16,
+  },
+  driverAvatar: {
+    width: 56,
+    height: 56,
+    borderRadius: 16,
+    backgroundColor: '#e8e4ce33',
+    borderWidth: 2,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  ratingBadge: {
+    position: 'absolute',
+    bottom: -4,
+    right: -4,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+    borderRadius: 6,
+    borderWidth: 1,
+    borderColor: 'white',
+  },
+  ratingText: {
+    fontSize: 10,
+    fontWeight: 'bold',
+    color: '#1c190d',
+  },
+  driverInfo: {
+    flex: 1,
+  },
+  driverName: {
+    fontSize: 18,
+    fontWeight: 'bold',
+    lineHeight: 18,
+  },
+  vehicleModel: {
+    fontSize: 12,
+    fontWeight: '500',
+    marginTop: 4,
+  },
+  plateNumber: {
+    fontSize: 14,
+    fontWeight: '800',
+    marginTop: 2,
+  },
+  driverActions: {
+    flexDirection: 'row',
+    gap: 8,
+  },
+  actionBtn: {
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  secondaryActions: {
+    flexDirection: 'row',
+    gap: 16,
+  },
+  secondaryBtn: {
+    flex: 1,
+    height: 48,
+    borderRadius: 12,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    gap: 8,
+  },
+  secondaryBtnText: {
+    fontSize: 14,
+    fontWeight: '600',
+  }
+});
